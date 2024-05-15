@@ -91,6 +91,10 @@ class ServerlessStack(TerraformStack):
             depends_on=[permission]
         )
 
+        TerraformOutput(
+            self, "s3_id",
+            value=bucket.id,
+            )
 
 
 app = App()
