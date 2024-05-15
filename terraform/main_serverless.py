@@ -19,7 +19,13 @@ class ServerlessStack(TerraformStack):
 
         account_id = DataAwsCallerIdentity(self, "acount_id").account_id
         
-        bucket = S3Bucket()
+        bucket = S3Bucket(
+            self, "bucketpostgram",
+            bucket_prefix = "bucketpostgram",
+            acl="private",
+            force_destroy=True,
+            versioning= {"enabled":True}
+            )
 
         S3BucketCorsConfiguration(
             self, "cors",
@@ -31,11 +37,38 @@ class ServerlessStack(TerraformStack):
             )]
             )
 
-        dynamo_table = DynamodbTable()
+        dynamo_table = DynamodbTable(
+            self, "DynamodDB-table",
+            name= "dynamo_postgram",
+            hash_key="user",
+            range_key="id",
+            attribute=[
+            DynamodbTableAttribute(name="user",type="S" ),
+            DynamodbTableAttribute(name="id",type="S" )
+            ],
+            billing_mode="PROVISIONED",
+            read_capacity=5,
+            write_capacity=5,
+            )
 
-        code = TerraformAsset()
+        code = TerraformAsset(
+            self, "code",
+            path="./lambda",
+            type= AssetType.ARCHIVE
+        )
 
-        lambda_function = LambdaFunction()
+        lambda_function = LambdaFunction(self,
+                "lambda",
+                function_name="lambda_postgram",
+                runtime="python3.12",
+                memory_size=128,
+                timeout=60,
+                role=f"arn:aws:iam::{account_id}:role/LabRole",
+                filename= code.path,
+                handler="lambda_function.lambda_handler",
+                # On recupere l'url de la file de sortie en variable d'environement :
+                # environment={"variables": {"output_queue_url": output_queue.url}}
+            )
 
         permission = LambdaPermission(
             self, "lambda_permission",
