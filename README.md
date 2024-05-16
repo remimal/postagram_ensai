@@ -14,3 +14,6 @@ cdktf deploy -a "pipenv run python3 main_server.py"
 dans webservice
 
 pip install -r requirements.txt
+
+swagger
+http://0.0.0.0:8080/docs

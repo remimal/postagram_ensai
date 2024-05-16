@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 from constructs import Construct
 from cdktf import App, TerraformStack, TerraformOutput, TerraformAsset, AssetType
 from cdktf_cdktf_provider_aws.provider import AwsProvider
@@ -95,7 +96,7 @@ class ServerlessStack(TerraformStack):
             self, "s3_id",
             value=bucket.id,
             )
-
+       
 
 app = App()
 ServerlessStack(app, "cdktf_serverless")
