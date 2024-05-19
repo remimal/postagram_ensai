@@ -93,7 +93,27 @@ async def get_all_posts(user: Union[str, None] = None):
 @app.delete("/posts/{post_id}")
 async def get_post_user_id(post_id: str):
     # Doit retourner le résultat de la requête la table dynamodb
-    return []
+    post_to_delete_list = table.query(
+        Select='ALL_ATTRIBUTES',
+        IndexName="InvertedIndex",
+        KeyConditionExpression="id = :id",
+        ExpressionAttributeValues={
+            ":id": f"POST#{post_id}",
+        },
+    )
+
+    post_to_delete = post_to_delete_list["Items"][0]
+
+    # TODO: delete picture in s3
+
+    response = table.delete_item(
+         Key= {
+              "user": post_to_delete["user"],
+              "id": post_to_delete["id"]
+         }
+    )
+
+    return response
 
 @app.get("/signedUrlPut")
 async def get_signed_url_put(filename: str,filetype: str, postId: str,authorization: str | None = Header(default=None)):
