@@ -32,12 +32,18 @@ Déployer la partie server :
 
 > cdktf deploy -a "pipenv run python3 main_server.py"
 
-dans webservice
+<span style="color:red">La console affiche en output l'url du load balancer. Il faut la récupérer et la mettre dans le fichier webapp/src/index.js comme valeur à la variable `axios.defaults.baseURL` !</span> 
 
-pip install -r requirements.txt
+## Webapp
 
-swagger
-http://0.0.0.0:8080/docs
+Pour lancer l'application, se placer dans le répertoire webapp, puis :
+>npm install  
+>npm start  
 
-npm install
-npm start
+
+## En cas de problème
+
+Si le react ne fonctionne pas, on peut passer par le swagger de l'api. Lancer le script webservice/app.py, puis dans un navigateur aller à http://0.0.0.0:8080/docs.
+
+Installer les packages si nécessaire :  
+> pip install -r requirements.txt
