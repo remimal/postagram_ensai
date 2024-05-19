@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from constructs import Construct
-from cdktf import App, TerraformStack
+from cdktf import App, TerraformOutput, TerraformStack
 from cdktf_cdktf_provider_aws.provider import AwsProvider
 from cdktf_cdktf_provider_aws.default_vpc import DefaultVpc
 from cdktf_cdktf_provider_aws.default_subnet import DefaultSubnet
@@ -142,6 +142,12 @@ class ServerStack(TerraformStack):
             vpc_zone_identifier= subnets,
             target_group_arns=[target_group.arn]
             )
+        
+        TerraformOutput(
+            self,
+            "URL load balancer :",
+            value=f"http://{lb.dns_name}",
+        )
 
 
 app = App()

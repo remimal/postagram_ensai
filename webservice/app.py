@@ -109,7 +109,7 @@ async def get_post_user_id(post_id: str):
 
     post_to_delete = post_to_delete_list["Items"][0]
 
-    # TODO: delete picture in s3
+    # TODO: delete picture in s3... (et arrêter de mélanger anglais et français)
 
     response = table.delete_item(
          Key= {
