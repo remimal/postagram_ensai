@@ -1,3 +1,5 @@
+cd terraform
+
 pipenv lock 
 pour créer Pipfile.lock
 

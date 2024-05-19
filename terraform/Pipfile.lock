@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c50ed8ebe524d9bfce34205048ec0dbcbd507903dfb845ca5de9206b6e41ba32"
+            "sha256": "b2eb4a801f150f29ddf926c4b9834c272f8638b1dc4ca40ff1d0490c28d18c89"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -40,6 +40,15 @@
             "index": "pypi",
             "markers": "python_version ~= '3.8'",
             "version": "==0.20.7"
+        },
+        "cdktf-cdktf-provider-aws": {
+            "hashes": [
+                "sha256:1df943640f452209134b289a8bec340fd83fc7c7de3a62b3832c4fd4aae998bc",
+                "sha256:ac052a959ab158a48f456878a9f4aa7a96958922472f03c46a86fe8354a82680"
+            ],
+            "index": "pypi",
+            "markers": "python_version ~= '3.8'",
+            "version": "==19.19.0"
         },
         "constructs": {
             "hashes": [

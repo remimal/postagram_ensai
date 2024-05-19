@@ -66,9 +66,8 @@ class ServerlessStack(TerraformStack):
                 timeout=60,
                 role=f"arn:aws:iam::{account_id}:role/LabRole",
                 filename= code.path,
-                handler="lambda_function.lambda_handler",
-                # On recupere l'url de la file de sortie en variable d'environement :
-                # environment={"variables": {"output_queue_url": output_queue.url}}
+                handler="lambda_function.lambda_handler",                
+                environment={"variables": {"dynamo_table_id": dynamo_table.id}}
             )
 
         permission = LambdaPermission(
@@ -96,6 +95,12 @@ class ServerlessStack(TerraformStack):
             self, "s3_id",
             value=bucket.id,
             )
+        
+        TerraformOutput(
+            self,
+            "dynamodb_id",
+            value= dynamo_table.id
+        )
        
 
 app = App()
