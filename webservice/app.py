@@ -74,17 +74,20 @@ async def post_a_post(post: Post, authorization: str | None = Header(default=Non
 async def get_all_posts(user: Union[str, None] = None):
 
     # Doit retourner une liste de post
-    
-    response = table.query(
-        Select='ALL_ATTRIBUTES',
-        KeyConditionExpression="user = :user",
-        ExpressionAttributeValues={
-            ":user": f"USER#{user}",
-        },
-    )
+
+    if(user is None):
+         response = table.scan()
+    else:    
+        response = table.query(
+            Select='ALL_ATTRIBUTES',
+            KeyConditionExpression="user = :user",
+            ExpressionAttributeValues={
+                ":user": f"USER#{user}",
+            },
+        )
 
     logger.info(json.dumps(response, indent=2))
-    return response
+    return response["Items"]
 
     
 @app.delete("/posts/{post_id}")
