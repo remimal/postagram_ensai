@@ -6,7 +6,6 @@
   "terraformProviders": [
     "hashicorp/aws@~>4.0"
   ],
-  "postDeploy": ["python3 update_env.py"],
   "terraformModules": [],
   "codeMakerOutput": "imports",
   "context": {}

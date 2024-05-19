@@ -14,9 +14,14 @@ from cdktf_cdktf_provider_aws.data_aws_caller_identity import DataAwsCallerIdent
 
 import base64
 
-bucket=""
-dynamo_table=""
-your_repo=""
+# UPDATE IF NEEDED WITH TERRAFORM OUTPUTS OF SERVERLESS STACK
+# (deployed with main_serverless.py)
+bucket_id="bucketpostgram20240516122109574900000001"
+dynamo_table_id="dynamo_postgram"
+#
+
+# Repo where are files for ec2s
+your_repo="https://github.com/remimal/postagram_ensai"
 
 
 user_data= base64.b64encode(f"""
@@ -27,8 +32,8 @@ apt install -y python3-pip python3.12-venv
 git clone {your_repo} projet
 cd projet/webservice
 rm .env
-echo 'BUCKET={bucket}' >> .env
-echo 'DYNAMO_TABLE={dynamo_table}' >> .env
+echo 'BUCKET={bucket_id}' >> .env
+echo 'DYNAMO_TABLE={dynamo_table_id}' >> .env
 python3 -m venv venv
 source venv/bin/activate
 chmod -R a+rwx venv
@@ -91,15 +96,52 @@ class ServerStack(TerraformStack):
             ]
             )
         
-        launch_template = LaunchTemplate()
+        launch_template = LaunchTemplate(
+            self, 
+            "compute",
+            image_id="ami-0557a15b87f6559cf",
+            instance_type="t2.micro",
+            user_data=user_data,
+            vpc_security_group_ids=[security_group.id],
+            key_name="vockey",
+            iam_instance_profile={"name": "LabInstanceProfile"}
+            )
         
-        lb = Lb()
+        lb = Lb(
+            self, 
+            "lb",
+            load_balancer_type="application",
+            security_groups=[security_group.id],
+            subnets=subnets
+            )
 
-        target_group=LbTargetGroup()
+        target_group=LbTargetGroup(
+            self, 
+            "tg_group",
+            port=8080,
+            protocol="HTTP",
+            vpc_id=default_vpc.id,
+            target_type="instance"
+            )
 
-        lb_listener = LbListener()
+        lb_listener = LbListener(
+            self, 
+            "lb_listener",
+            load_balancer_arn=lb.arn,
+            port=80,
+            protocol="HTTP",
+            default_action=[LbListenerDefaultAction(type="forward", target_group_arn=target_group.arn)]
+            )
 
-        asg = AutoscalingGroup()
+        asg = AutoscalingGroup(
+            self, "asg",
+            min_size=1,
+            max_size=4,
+            desired_capacity=1,
+            launch_template={"id":launch_template.id},
+            vpc_zone_identifier= subnets,
+            target_group_arns=[target_group.arn]
+            )
 
 
 app = App()
