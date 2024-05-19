@@ -92,6 +92,11 @@ async def get_all_posts(user: Union[str, None] = None):
     
 @app.delete("/posts/{post_id}")
 async def get_post_user_id(post_id: str):
+
+    #### post_id ne doit pas avoir le "POST#" du début !
+    #### post_id="svcfshiusjsuud" -> bien
+    #### post_id="POST#svcfshiusjsuud" -> pas bien
+
     # Doit retourner le résultat de la requête la table dynamodb
     post_to_delete_list = table.query(
         Select='ALL_ATTRIBUTES',
